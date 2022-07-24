@@ -1,6 +1,9 @@
 package keyLogger;
 
 import java.awt.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 
 import javax.swing.*;
 
@@ -24,6 +27,20 @@ public class MyPanel extends JPanel {
 		button.setPreferredSize(new Dimension(150, 50));
 		button.setFont(new Font("Dialog", Font.BOLD, 30));
 		button.setFocusable(false);
+		button.addActionListener((e) -> {
+			
+			try (Scanner sc = new Scanner(area.getText());
+				 FileWriter writer = new FileWriter("Text.txt");) 
+			{
+				while(sc.hasNext()) {
+					String temp = sc.nextLine();
+					writer.write(temp + "\n");
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+		});
 		
 		this.add(label);
 		this.add(new JScrollPane(area));

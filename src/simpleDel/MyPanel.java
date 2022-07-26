@@ -24,6 +24,7 @@ public class MyPanel extends JPanel {
 		this.setPreferredSize(new Dimension(800, 600));
 		this.setFocusable(true);
 		this.setLayout(null);
+		this.setCursor(new Cursor(Cursor.TEXT_CURSOR));
 		
 		labels = new ArrayList<RandomForm>();
 		this.addMouseListener(new MouseAdapter() {
@@ -48,6 +49,7 @@ public class MyPanel extends JPanel {
 					MyPanel.this.add(temp);
 					labels.add(temp);
 					repaint();
+					
 				} 
 				
 			}

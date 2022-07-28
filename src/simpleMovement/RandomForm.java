@@ -16,8 +16,6 @@ public class RandomForm extends JLabel {
 	
 	private int x;
 	private int y;
-	private int dx = 0;
-	private int dy = 0;
 
 	public int getX() {
 		return x;
@@ -33,22 +31,6 @@ public class RandomForm extends JLabel {
 
 	public void setY(double y) {
 		this.y = (int) y;
-	}
-
-	public int getDx() {
-		return dx;
-	}
-
-	public void setDx(double dx) {
-		this.dx = (int) dx;
-	}
-
-	public int getDy() {
-		return dy;
-	}
-
-	public void setDy(double dy) {
-		this.dy = (int) dy;
 	}
 
 	RandomForm(int x, int y) {

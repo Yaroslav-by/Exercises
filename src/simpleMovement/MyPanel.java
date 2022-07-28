@@ -57,17 +57,9 @@ public class MyPanel extends JPanel {
 					});
 					
 					temp.addMouseMotionListener(new MouseAdapter() {
-						
-					    public void mouseMoved(MouseEvent e) {
-//					    	if (isPressed) {
-//					    		System.out.println("Mouse moved on copmonent" + e.getComponent());
-//					    	}
-					        
-					    }
 					    
 					    public void mouseDragged(MouseEvent e) {
 					    	if (isPressed) {
-					    		System.out.println("Mouse drugged" + e);
 					    		
 					    		((RandomForm) e.getComponent()).setX(
 					    						e.getComponent().getBounds().getX() + e.getX());

@@ -22,23 +22,25 @@ public class MyPanel extends JPanel {
 		this.setPreferredSize(new Dimension(600, 500));
 		this.setFocusable(true);
 		
-		JTextField tF = new JTextField("ÐÐ¾Ð²Ð°Ñ ÑÑ‚Ñ€Ð¾ÐºÐ°");
+		JTextField tF = new JTextField("Íîâàÿ ñòðîêà");
 		tF.setPreferredSize(new Dimension(500, 40));
 		
-		JButton b = new JButton("Ð—Ð°Ð¿Ð¸ÑÐ°Ñ‚ÑŒ");
+		JButton b = new JButton("Çàïèñàòü");
 		b.setPreferredSize(new Dimension(100, 30));
 		b.setFocusable(false);
 		
-		JTextArea area = new JTextArea(20, 50);
-		JScrollPane scroll = new JScrollPane(area);
-		scroll.createVerticalScrollBar();
-		scroll.setVisible(true);
+		JTextArea area = new JTextArea(20,50);
+		area.setEditable(false);
+		JScrollPane scroll = new JScrollPane(area, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll.setEnabled(true);
 		
-		
+		b.addActionListener((e) -> area.setText(area.getText() + "\n" + tF.getText()));
 		
 		this.add(tF);
 		this.add(b);
-		this.add(area);
+		this.add(scroll);
+		
 		
 	}
 }

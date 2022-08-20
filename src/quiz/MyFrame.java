@@ -6,10 +6,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,7 +18,16 @@ import javax.swing.border.LineBorder;
 public class MyFrame extends JFrame {
 
 	private Font font;
-	private HashMap<String, HashMap<String, Boolean>> questions;
+	
+	private Map<String, Map<String, Boolean>> questions;
+	
+	private QuizButton[] quizButtons = new QuizButton[4];
+	private JLabel counter;
+	private JLabel question;
+	
+	private boolean isReady = false;
+	private static int score = 0;
+	private int questionNumber = 1;
 	
 	public MyFrame() {
 		
@@ -27,14 +36,6 @@ public class MyFrame extends JFrame {
 		this.setTitle("Quiz");
 		this.setLayout(new FlowLayout());
 		
-		questions = new HashMap<>();
-		questions.put("Вопрос 1", new HashMap<String, Boolean>());
-		questions.get("Вопрос 1").put("Ответ 1", false);
-		questions.get("Вопрос 1").put("Ответ 2", true);
-		questions.get("Вопрос 1").put("Ответ 3", false);
-		questions.get("Вопрос 1").put("Ответ 4", false);
-		System.out.println(questions.get("Вопрос 1"));
-		
 		font = new Font("Times New Roman", Font.PLAIN, 25);
 		
 		//Счетчик вопросов
@@ -42,7 +43,7 @@ public class MyFrame extends JFrame {
 		counterPanel.setPreferredSize(new Dimension(750, 40));
 		counterPanel.setLayout(new BorderLayout());
 		
-		JLabel counter = new JLabel("Вопрос 1/10");
+		counter = new JLabel("Вопрос " + questionNumber + "/10");
 		counter.setFont(font);
 		counterPanel.add(counter, BorderLayout.EAST);
 		
@@ -52,7 +53,7 @@ public class MyFrame extends JFrame {
 		questionPanel.setBorder(new LineBorder(Color.black, 5, true));
 		questionPanel.setBackground(Color.white);
 		
-		JLabel question = new JLabel();
+		question = new JLabel();
 		question.setFont(font);
 		
 		questionPanel.add(question);
@@ -62,21 +63,19 @@ public class MyFrame extends JFrame {
 		answerPanel.setLayout(new GridLayout(2, 2, 20, 20));
 		answerPanel.setPreferredSize(new Dimension(650, 200));
 		
-		QuizButton b1 = new QuizButton("ДА!!!!!!!!", true);
-		b1.addActionListener((e) -> System.out.println(b1.isRight()));
-		setSettingB(b1);
-		QuizButton b2 = new QuizButton("ДАААА", false);
-		setSettingB(b2);
-		QuizButton b3 = new QuizButton("да", false);
-		setSettingB(b3);
-		QuizButton b4 = new QuizButton("ДАААААААААААААААА", false);
-		setSettingB(b4);
+		quizButtons[0] = new QuizButton();
+		setSettingB(quizButtons[0]);
+		quizButtons[1] = new QuizButton();
+		setSettingB(quizButtons[1]);
+		quizButtons[2] = new QuizButton();
+		setSettingB(quizButtons[2]);
+		quizButtons[3] = new QuizButton();
+		setSettingB(quizButtons[3]);
 		
-		answerPanel.add(b1);
-		answerPanel.add(b2);
-		answerPanel.add(b3);
-		answerPanel.add(b4);
-		
+		answerPanel.add(quizButtons[0]);
+		answerPanel.add(quizButtons[1]);
+		answerPanel.add(quizButtons[2]);
+		answerPanel.add(quizButtons[3]);
 		
 		this.add(Box.createRigidArea(new Dimension(800, 30)));
 		this.add(counterPanel);
@@ -86,14 +85,73 @@ public class MyFrame extends JFrame {
 		this.add(answerPanel);
 		this.setVisible(true);
 		
+		startGame();
+		
 	}
 	
-	private void setSettingB(JButton b) {
+	private void setSettingB(QuizButton b) {
 		
 		b.setFocusable(false);
 		b.setFont(font);
 		b.setBorder(new LineBorder(Color.black, 5, true));
 		b.setBackground(Color.LIGHT_GRAY);
+		b.addActionListener((e) -> {
+			
+			if (b.isRight()) {
+				MyFrame.score += 1;
+			}
+			counter.setText("Вопрос " + ++questionNumber + "/10");
+			System.out.println(MyFrame.score);
+			startGame();
+			
+		});
 		
+	}
+	
+	private void startGame() {
+		
+		//Генерируем вопросы
+		if (!isReady) {
+			questions = getQuestions();	
+		}
+		
+		//Берем из Map вопрос 
+		String temp = null;
+		for (Map.Entry<String, Map<String, Boolean>> entry : questions.entrySet()) {
+			temp = (String) entry.getKey();
+			question.setText(temp);
+			
+			//Берем по ключу вопросы, соответствующие ему ответы с их правильностью
+			int x = 0;
+			for (Map.Entry<String, Boolean> entry1 : questions.get(temp).entrySet()) {
+				for (int i = x++; i < quizButtons.length; i++) {
+					quizButtons[i].setText((String) entry1.getKey());
+					quizButtons[i].setRight((Boolean) entry1.getValue());
+				}
+			}
+			break;
+		}
+
+		isReady = true;				//Вопросы готовы
+		questions.remove(temp);     //Удаляем из Map вопрос, который добавили для исключения повторения
+	
+	}
+	
+	public ConcurrentHashMap<String, Map<String, Boolean>> getQuestions() {
+		
+		ConcurrentHashMap<String, Map<String, Boolean>> q = new ConcurrentHashMap<>();
+		q.put("Вопрос 1", new ConcurrentHashMap<String, Boolean>());
+		q.get("Вопрос 1").put("Ответ 1", false);
+		q.get("Вопрос 1").put("Ответ 2", true);
+		q.get("Вопрос 1").put("Ответ 3", false);
+		q.get("Вопрос 1").put("Ответ 4", false);
+		
+		q.put("Вопрос 2", new ConcurrentHashMap<String, Boolean>());
+		q.get("Вопрос 2").put("Ответ 5", false);
+		q.get("Вопрос 2").put("Ответ 6", true);
+		q.get("Вопрос 2").put("Ответ 7", false);
+		q.get("Вопрос 2").put("Ответ 8", false);
+		
+		return q;
 	}
 }

@@ -26,6 +26,7 @@ public class MyFrame extends JFrame {
 	private JLabel question;
 	
 	private boolean isReady = false;
+	private boolean isStillPlaying = true;
 	private static int score = 0;
 	private int questionNumber = 1;
 	
@@ -113,44 +114,111 @@ public class MyFrame extends JFrame {
 		//Генерируем вопросы
 		if (!isReady) {
 			questions = getQuestions();	
+		} else if (questionNumber == 11) {
+			for (QuizButton i : quizButtons) {
+				i.setEnabled(false);
+				i.setVisible(false);
+			}
+			isStillPlaying = false;
+			question.setText("Ваш результат: " + MyFrame.score + "/10");
+			counter.setText("");
 		}
 		
-		//Берем из Map вопрос 
-		String temp = null;
-		for (Map.Entry<String, Map<String, Boolean>> entry : questions.entrySet()) {
-			temp = (String) entry.getKey();
-			question.setText(temp);
-			
-			//Берем по ключу вопросы, соответствующие ему ответы с их правильностью
-			int x = 0;
-			for (Map.Entry<String, Boolean> entry1 : questions.get(temp).entrySet()) {
-				for (int i = x++; i < quizButtons.length; i++) {
-					quizButtons[i].setText((String) entry1.getKey());
-					quizButtons[i].setRight((Boolean) entry1.getValue());
+		if (isStillPlaying) {
+			//Берем из Map вопрос 
+			String temp = null;
+			for (Map.Entry<String, Map<String, Boolean>> entry : questions.entrySet()) {
+				temp = (String) entry.getKey();
+				question.setText(temp);
+				
+				//Берем по ключу вопросы и соответствующие им ответы с их правильностью
+				int x = 0;
+				for (Map.Entry<String, Boolean> entry1 : questions.get(temp).entrySet()) {
+					for (int i = x++; i < quizButtons.length; i++) {
+						quizButtons[i].setText((String) entry1.getKey());
+						quizButtons[i].setRight((Boolean) entry1.getValue());
+					}
 				}
+				break;
 			}
-			break;
+			isReady = true;				//Вопросы готовы
+			questions.remove(temp);     //Удаляем из Map вопрос, который добавили для исключения повторения
 		}
-
-		isReady = true;				//Вопросы готовы
-		questions.remove(temp);     //Удаляем из Map вопрос, который добавили для исключения повторения
 	
 	}
 	
 	public ConcurrentHashMap<String, Map<String, Boolean>> getQuestions() {
 		
 		ConcurrentHashMap<String, Map<String, Boolean>> q = new ConcurrentHashMap<>();
-		q.put("Вопрос 1", new ConcurrentHashMap<String, Boolean>());
-		q.get("Вопрос 1").put("Ответ 1", false);
-		q.get("Вопрос 1").put("Ответ 2", true);
-		q.get("Вопрос 1").put("Ответ 3", false);
-		q.get("Вопрос 1").put("Ответ 4", false);
+		q.put("Что, согласно известной идиоме, точит болтун?", 
+				new ConcurrentHashMap<String, Boolean>());
+		q.get("Что, согласно известной идиоме, точит болтун?").put("Зубы", false);
+		q.get("Что, согласно известной идиоме, точит болтун?").put("Вилы", false);
+		q.get("Что, согласно известной идиоме, точит болтун?").put("Ножи", false);
+		q.get("Что, согласно известной идиоме, точит болтун?").put("Лясы", true);
 		
-		q.put("Вопрос 2", new ConcurrentHashMap<String, Boolean>());
-		q.get("Вопрос 2").put("Ответ 5", false);
-		q.get("Вопрос 2").put("Ответ 6", true);
-		q.get("Вопрос 2").put("Ответ 7", false);
-		q.get("Вопрос 2").put("Ответ 8", false);
+		q.put("Как иначе называют плод инжирового дерева?", 
+				new ConcurrentHashMap<String, Boolean>());
+		q.get("Как иначе называют плод инжирового дерева?").put("Фейхоа", false);
+		q.get("Как иначе называют плод инжирового дерева?").put("Фига", true);
+		q.get("Как иначе называют плод инжирового дерева?").put("Фалса", false);
+		q.get("Как иначе называют плод инжирового дерева?").put("Финик", false);
+		
+		q.put("Как называется подъёмный механизм колодца?", 
+				new ConcurrentHashMap<String, Boolean>());
+		q.get("Как называется подъёмный механизм колодца?").put("Бретель", false);
+		q.get("Как называется подъёмный механизм колодца?").put("Штанина", false);
+		q.get("Как называется подъёмный механизм колодца?").put("Ворот", true);
+		q.get("Как называется подъёмный механизм колодца?").put("Рукав", false);
+		
+		q.put("Кто внес решающий вклад в процесс вытаскивания репки?", 
+				new ConcurrentHashMap<String, Boolean>());
+		q.get("Кто внес решающий вклад в процесс вытаскивания репки?").put("Дед", false);
+		q.get("Кто внес решающий вклад в процесс вытаскивания репки?").put("Мышка", true);
+		q.get("Кто внес решающий вклад в процесс вытаскивания репки?").put("Внучка", false);
+		q.get("Кто внес решающий вклад в процесс вытаскивания репки?").put("Жучка", false);
+		
+		q.put("Что обещал сделать Архимед, найдя точку опоры?", 
+				new ConcurrentHashMap<String, Boolean>());
+		q.get("Что обещал сделать Архимед, найдя точку опоры?").put("Сдвинуть Землю", true);
+		q.get("Что обещал сделать Архимед, найдя точку опоры?").put("Выпить еще", false);
+		q.get("Что обещал сделать Архимед, найдя точку опоры?").put("Перевернуть жизнь", false);
+		q.get("Что обещал сделать Архимед, найдя точку опоры?").put("Перевернуть Вселенную", false);
+		
+		q.put("Что из этого не является музыкальным инструментом?", 
+				new ConcurrentHashMap<String, Boolean>());
+		q.get("Что из этого не является музыкальным инструментом?").put("Ксилофон", false);
+		q.get("Что из этого не является музыкальным инструментом?").put("Металлофон", false);
+		q.get("Что из этого не является музыкальным инструментом?").put("Саксофон", false);
+		q.get("Что из этого не является музыкальным инструментом?").put("Граммофон", true);
+		
+		q.put("Женское имя, прославившее композитора Матвея Блантера?", 
+				new ConcurrentHashMap<String, Boolean>());
+		q.get("Женское имя, прославившее композитора Матвея Блантера?").put("Любовь", false);
+		q.get("Женское имя, прославившее композитора Матвея Блантера?").put("Надежда", false);
+		q.get("Женское имя, прославившее композитора Матвея Блантера?").put("Катюша", true);
+		q.get("Женское имя, прославившее композитора Матвея Блантера?").put("Аленушка", false);
+		
+		q.put("Никогда не применялось для изготовления свечей?", 
+				new ConcurrentHashMap<String, Boolean>());
+		q.get("Никогда не применялось для изготовления свечей?").put("Стеарин", false);
+		q.get("Никогда не применялось для изготовления свечей?").put("Керосин", true);
+		q.get("Никогда не применялось для изготовления свечей?").put("Парафин", false);
+		q.get("Никогда не применялось для изготовления свечей?").put("Воск", false);
+		
+		q.put("Какая из этих сказок не написана Г. Х. Андерсеном?", 
+				new ConcurrentHashMap<String, Boolean>());
+		q.get("Какая из этих сказок не написана Г. Х. Андерсеном?").put("Золушка", true);
+		q.get("Какая из этих сказок не написана Г. Х. Андерсеном?").put("Дюймовочка", false);
+		q.get("Какая из этих сказок не написана Г. Х. Андерсеном?").put("Русалочка", false);
+		q.get("Какая из этих сказок не написана Г. Х. Андерсеном?").put("Огниво", false);
+		
+		q.put("Как называют сполохи огня в костре?", 
+				new ConcurrentHashMap<String, Boolean>());
+		q.get("Как называют сполохи огня в костре?").put("Пятки", false);
+		q.get("Как называют сполохи огня в костре?").put("Ресницы", false);
+		q.get("Как называют сполохи огня в костре?").put("Веки", false);
+		q.get("Как называют сполохи огня в костре?").put("Языки", true);
 		
 		return q;
 	}

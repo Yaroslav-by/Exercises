@@ -4,6 +4,8 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.JLabel;
@@ -25,8 +27,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.JSlider;
 import javax.swing.JList;
 import javax.swing.AbstractListModel;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ListSelectionModel;
 import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JButton;
 
 public class RegistrationForm {
@@ -324,20 +329,24 @@ public class RegistrationForm {
 		lblNewLabel_3_1_1.setBounds(463, 170, 20, 20);
 		panel_1_1.add(lblNewLabel_3_1_1);
 		
-		JList list = new JList();
-		list.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
-		list.setModel(new AbstractListModel() {
+		JList<String> list = new JList<String>();
+		list.setVisibleRowCount(4);
+		list.setBorder(null);
+		list.setModel(new AbstractListModel<String>() {
 			String[] values = new String[] {"\u041C\u044F\u0447\u0438\u043A", "\u0424\u0440\u0438\u0441\u0431\u0438", "\u041A\u043E\u043B\u044C\u0446\u0430", "\u041A\u043E\u0441\u0442\u043E\u0447\u043A\u0438", "\u041F\u0430\u043B\u043E\u0447\u043A\u0438", "\u0412 \u0444\u043E\u0440\u043C\u0435 \u0436\u0438\u0432\u043E\u0442\u043D\u044B\u0445", "\u041C\u044F\u0433\u043A\u0438\u0435, \u0442\u0435\u043A\u0441\u0442\u0438\u043B\u044C\u043D\u044B\u0435", "\u0418\u043D\u0442\u0435\u0440\u0430\u043A\u0442\u0438\u0432\u043D\u044B\u0435\u0435\u0435\u0435\u0435\u0435/\u0440\u0430\u0437\u0432\u0438\u0432\u0430\u044E\u0449\u0438\u0435"};
 			public int getSize() {
 				return values.length;
 			}
-			public Object getElementAt(int index) {
+			public String getElementAt(int index) {
 				return values[index];
 			}
 		});
 		list.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-		list.setBounds(10, 200, 473, 94);
-		panel_1_1.add(list);
+		
+		JScrollPane scrollBar = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollBar.setBounds(10, 200, 473, 94);
+		panel_1_1.add(scrollBar);
 		
 		JPanel panelForText_1 = new JPanel();
 		panelForText_1.setBounds(0, 240, 636, 45);
@@ -356,6 +365,34 @@ public class RegistrationForm {
 		JButton btnNewButton = new JButton("\u0414\u0435\u043B' \u0441\u0434\u0435\u043B\u0430\u043D\u043E!");
 		btnNewButton.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		btnNewButton.setFocusable(false);
+		btnNewButton.addActionListener((e) -> {
+			
+			JFrame frame = new JFrame();
+			Box box = new Box(BoxLayout.Y_AXIS);
+			box.add(new JLabel("ХОЗЯИН"));
+			box.add(new JLabel("ФИО: " + textField.getText()));
+			box.add(new JLabel("Возраст: " + spinner.getValue()));
+			box.add(new JLabel("Пол: " + (rdbtnNewRadioButton.isSelected() ? rdbtnNewRadioButton.getText() : 
+				rdbtnNewRadioButton_1.isSelected() ? rdbtnNewRadioButton_1.getText() :
+				rdbtnNewRadioButton_2.getText())));
+			box.add(new JLabel("Номер телефона: " + textField_1.getText()));
+			box.add(new JLabel("Почта: " + textField_2.getText()));
+			box.add(Box.createRigidArea(new Dimension(100, 20)));
+			box.add(new JLabel("ПИТОМЕЦ"));
+			box.add(new JLabel("Кличка: " + textField_3.getText()));
+			box.add(new JLabel("Вид: " + comboBox.getSelectedItem()));
+			box.add(new JLabel("Пол: " + (rdbtnNewRadioButton_1_1.isSelected() ? rdbtnNewRadioButton_1_1.getText() : 
+				rdbtnNewRadioButton_3.getText())));
+			box.add(new JLabel("Цвет: " + (chckbxNewCheckBox.isSelected() ? textField_4.getText() :
+				comboBox_1.getSelectedItem())));
+			box.add(new JLabel("Вес: " + slider.getValue() + " кг"));
+			box.add(new JLabel("Любимые игрушки: " + list.getSelectedValuesList()));
+			
+			frame.add(box);
+			frame.pack();
+			frame.setVisible(true);
+			
+		});
 		panelForText_1_1.add(btnNewButton);
 	}
 }

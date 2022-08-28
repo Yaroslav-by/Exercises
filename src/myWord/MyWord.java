@@ -14,19 +14,33 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import java.awt.Font;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.FlowLayout;
 import java.awt.Component;
-import javax.swing.JTextPane;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.DefaultComboBoxModel;
 
 public class MyWord {
 
 	private JFrame frame;
+	
 	private String fontName = "Times New Roman";
 	private int fontStyle = Font.PLAIN;
 	private int fontSize = 16;
+	
+	private File path = null;
+	private String name = null;
+	private boolean isPathReady = false;
 
 	/**
 	 * Launch the application.
@@ -78,14 +92,49 @@ public class MyWord {
 		panelButtons.add(panelLeft, BorderLayout.WEST);
 		panelLeft.setLayout(new BoxLayout(panelLeft, BoxLayout.X_AXIS));
 		
+		JEditorPane textPane = new JEditorPane();
+		textPane.setFont(new Font(fontName, fontStyle, fontSize));
+		
+		JLabel labelOpenedFile = new JLabel("\u041E\u0442\u043A\u0440\u044B\u0442 \u0444\u0430\u0439\u043B:");
+		
 		JButton buttonOpenFile = new JButton("\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0444\u0430\u0439\u043B");
 		buttonOpenFile.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		buttonOpenFile.setFocusable(false);
+		buttonOpenFile.addActionListener((e) -> {
+			
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.showSaveDialog(buttonOpenFile);
+			path = fileChooser.getSelectedFile();
+			
+			try (
+					Scanner sc = new Scanner(path);
+				) 
+			{
+			
+				while (sc.hasNext()) {
+					textPane.setText(textPane.getText() + sc.nextLine() + "\n");
+				}
+				
+				isPathReady = true;
+				String[] temp = path.getAbsolutePath().split("\\\\");
+				name = temp[temp.length - 1];
+				labelOpenedFile.setText("Открыт файл: " + name);
+				
+			} catch (FileNotFoundException e1) {
+				JOptionPane.showMessageDialog(
+	  					  					  frame, 
+	  					  					  "Упс, что-то пошло не так!", 
+	  					  					  "Ошибка!", 
+	  					  					  JOptionPane.ERROR_MESSAGE
+											 );
+				e1.printStackTrace();
+			}
+			
+		});
 		panelLeft.add(Box.createRigidArea(new Dimension(20, 10)));
 		panelLeft.add(buttonOpenFile);
 		panelLeft.add(Box.createRigidArea(new Dimension(20, 10)));
 		
-		JLabel labelOpenedFile = new JLabel("\u041E\u0442\u043A\u0440\u044B\u0442 \u0444\u0430\u0439\u043B:");
 		labelOpenedFile.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		panelLeft.add(labelOpenedFile);
 		
@@ -97,11 +146,100 @@ public class MyWord {
 		JButton buttonSave = new JButton("\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C");
 		buttonSave.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		buttonSave.setFocusable(false);
+		buttonSave.addActionListener((e) -> {
+			
+			if (!isPathReady) {
+				
+				try (
+						Scanner sc = new Scanner(textPane.getText());
+						FileWriter writer = new FileWriter(System.getProperty("user.dir") + "\\Text.txt");
+					) 
+				{
+					while (sc.hasNext()) {
+						String temp = sc.nextLine();
+						writer.write(temp + "\n");
+					}
+					name = "Text.txt";
+					labelOpenedFile.setText("Открыт файл: " + name);
+					
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(
+							  					  frame, 
+							  					  "Упс, что-то пошло не так!", 
+							  					  "Ошибка!", 
+							  					  JOptionPane.ERROR_MESSAGE
+												 );
+					e1.printStackTrace();
+				}
+				
+			} else {
+				
+				try (
+						Scanner sc = new Scanner(textPane.getText());
+						FileWriter writer = new FileWriter(path);
+					) 
+				{
+					while (sc.hasNext()) {
+						String temp = sc.nextLine();
+						writer.write(temp + "\n");
+					}
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(
+							  					  frame, 
+							  					  "Упс, что-то пошло не так!", 
+							  					  "Ошибка!", 
+							  					  JOptionPane.ERROR_MESSAGE
+												 );
+					e1.printStackTrace();
+				}
+				
+			}
+			
+		});
 		panelRight.add(buttonSave);
 		
 		JButton buttonSaveAs = new JButton("\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u043A\u0430\u043A");
 		buttonSaveAs.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		buttonSaveAs.setFocusable(false);
+		buttonSaveAs.addActionListener((e) -> {
+			
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.showSaveDialog(buttonSaveAs);
+			path = fileChooser.getSelectedFile();
+			
+			try (
+					Scanner sc = new Scanner(textPane.getText());
+					FileWriter writer = new FileWriter(path);
+				) 
+			{
+				while (sc.hasNext()) {
+					String temp = sc.nextLine();
+					writer.write(temp + "\n");
+				}
+				isPathReady = true;
+				
+				String[] temp = path.getAbsolutePath().split("\\\\");
+				name = temp[temp.length - 1];
+				labelOpenedFile.setText("Открыт файл: " + name);
+				
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(
+											  frame, 
+											  "Упс, что-то пошло не так!", 
+											  "Ошибка!", 
+											  JOptionPane.ERROR_MESSAGE
+											 );
+				e1.printStackTrace();
+			} catch (NullPointerException e2) {
+				JOptionPane.showMessageDialog(
+											  frame, 
+											  "Вы не выбрали путь для сохранения!", 
+											  "Ошибка!", 
+											  JOptionPane.ERROR_MESSAGE
+											 );
+			}
+			
+		});
 		panelRight.add(buttonSaveAs);
 		panelRight.add(Box.createRigidArea(new Dimension(20, 10)));
 		
@@ -115,10 +253,6 @@ public class MyWord {
 		frame.getContentPane().add(panelForText, BorderLayout.CENTER);
 		panelForText.add(Box.createRigidArea(new Dimension(20, 10)));
 		panelForText.setLayout(new BoxLayout(panelForText, BoxLayout.X_AXIS));
-		
-		JTextPane textPane = new JTextPane();
-		textPane.setFont(new Font(fontName, fontStyle, fontSize));
-		textPane.setContentType("text");
 		
 		JPanel panelDown = new JPanel();
 		frame.getContentPane().add(panelDown, BorderLayout.SOUTH);

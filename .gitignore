@@ -3,3 +3,7 @@
 .settings/
 bin/
 Text.txt
+jgoodies-forms-1.8.0.jar
+jgoodies-forms-1.8.0-sources.jar
+miglayout15-swing.jar
+miglayout-src.zip

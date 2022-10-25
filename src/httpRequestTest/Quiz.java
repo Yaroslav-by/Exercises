@@ -13,22 +13,29 @@ import org.json.JSONObject;
 
 public class Quiz {
 
-	public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
-		
-		Quiz quiz = new Quiz();
-		Scanner sc = new Scanner(System.in);
-		
-		int n = 0;
-		for (int i = 0; i < 8; i++) {
-			n += quiz.askAndAnswerQuestion(sc);
-		}
-		
-		System.out.println("You answered " + n + "/8 questions!");
-		sc.close();
+	private String question;
+	private String answer;
+	private Scanner sc;
+	
+	public String getQuestion() {
+		return question;
+	}
 
+	public void setQuestion(String question) {
+		this.question = question;
+	}
+
+	public String getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(String answer) {
+		this.answer = answer;
 	}
 	
-	public int askAndAnswerQuestion(Scanner scanner) throws URISyntaxException, IOException, InterruptedException {
+	public void askAndAnswerQuestion() throws URISyntaxException, IOException, InterruptedException {
+		
+		sc = new Scanner(System.in);
 		
 		HttpRequest getRequest = HttpRequest.newBuilder()
 				.uri(new URI("http://jservice.io/api/random"))
@@ -42,19 +49,11 @@ public class Quiz {
 		String jsonResponse = getResponse.body().toString();
         JSONArray array = new JSONArray(jsonResponse);
         JSONObject obj = array.getJSONObject(0);
-		
-        System.out.println(obj.get("question") + " (" + obj.get("answer") + ")");
-        System.out.print("Enter your answer: ");
         
-        String answer = scanner.nextLine().toLowerCase();
+        this.answer = (String) obj.get("answer");
+        this.question = (String) obj.get("question") + " " + "(" + this.answer + ")";
         
-        if (answer.equals(obj.get("answer").toString().toLowerCase())) {
-        	System.out.println("Right you are!");
-        	return 1;
-        } else {
-        	System.out.println("Nope!");
-        	return 0;
-        }
+        sc.close();
         
 	}
 

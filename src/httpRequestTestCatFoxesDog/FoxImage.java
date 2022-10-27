@@ -27,7 +27,7 @@ private Image image;
 		
 		try {
 			HttpRequest getRequest = HttpRequest.newBuilder()
-					.uri(new URI("https://randomfox.ca/floof"))
+					.uri(new URI("https://randomfox.ca/floof/"))
 					.GET()
 					.build();
 			

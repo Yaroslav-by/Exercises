@@ -18,7 +18,7 @@ import org.json.JSONObject;
 public class TheExactAddress{
 	
 	private final static String FORMAT = "format=json";
-	private final static String APIKEY = Apikey.getAPIKEY();
+	private final static String APIKEY = Apikey.getAPIKEYGEOCODER();
 	
 	public static void main(String[] args) {
 		
